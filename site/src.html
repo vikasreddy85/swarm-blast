@@ -198,6 +198,7 @@ input[type=range]{accent-color:var(--accent);width:100%}
 .gen-t{font-family:var(--mono);font-size:12.5px;color:var(--ink);line-height:1.6;margin-top:4px}
 .gen-s{font-family:var(--sans);font-size:12.5px;color:var(--muted);margin-top:4px}
 .nw{text-decoration:underline;text-decoration-color:var(--c-exact);text-decoration-thickness:2px;text-underline-offset:3px}
+code.vterm{border-bottom:1px dotted var(--muted);cursor:help}
 footer{padding-block:36px 64px;font-family:var(--sans);font-size:13.5px;color:var(--muted)}
 @media (prefers-reduced-motion: reduce){ *{transition:none!important;animation:none!important} }
 </style>
@@ -205,19 +206,19 @@ footer{padding-block:36px 64px;font-family:var(--sans);font-size:13.5px;color:va
 <div class="wrap">
 <header class="hero"><div class="inner">
   <div class="kicker">swarm-blast · research explainer</div>
-  <h1>Detecting self-replicating prompts in multi-agent systems</h1>
-  <p class="lede">A prompt that tells an agent to copy it can spread through a team of agents like a worm. This page explains the swarm-blast experiments with real messages and real runs from the logs.</p>
+  <h1>Detecting evasive self-replicating prompts in multi-agent systems using biology-inspired detectors</h1>
+  <p class="lede">A prompt that tells an agent to copy it can spread through a team of agents like a worm. To find one, we borrow the methods biologists use on genomes. The project is named after BLAST, the standard tool for finding matching sequences in DNA (<a class="cite" href="#ref-altschul">Altschul et al. 1990</a>), and its detectors search agent messages the same way BLAST searches a genome: for the short stretches that a replicator cannot change without breaking. This page explains the experiments with real messages and real runs from the logs.</p>
   <div class="abstract"><strong>Key findings</strong>
     <ol>
       <li><b>Detection survived real paraphrase.</b> When deepseek-v4-pro reworded almost every copy, the detectors still separated infected runs from clean runs (AUC 0.91 to 0.98). The instruction to rewrite ("in your own words") and parts of the wrapper ("the shared filing index") were the parts that never changed.</li>
       <li><b>A warning protects some models and not others.</b> The strongest system-prompt warning stopped deepseek-v4-pro completely, but gpt-4o-mini still passed the note to 74% of agents.</li>
-      <li><b>Some models do not paraphrase at all.</b> Told to reword the note, gpt-4o-mini copied it exactly (79%) or dropped it. Only 1% of its copies were partly reworded.</li>
+      <li><b>The smallest model did not paraphrase at all.</b> Told to reword the note, gpt-4o-mini copied it exactly (79%) or dropped it, with only 1% partly reworded. The five larger models reworded 85 to 98% of copies.</li>
       <li><b>Marker tokens overstate spread.</b> Agents add a seen tag to their messages like a sign-off habit, without the instruction, in up to 13% of messages.</li>
       <li><b>Preliminary: more senders, more copying.</b> Under a strong warning, one infected message led to a copy 22% of the time, and two or more led to a copy 95 to 100% of the time.</li>
     </ol>
   </div>
   <div class="meta">
-    <div><span class="label">Models<sup class="fn"><a href="#fn-models" id="fnref-models">1</a></sup></span><b>gpt-4o-mini, deepseek-v4-pro, grok-4.3, kimi-k2.5, glm-4.6, llama-4-maverick, mistral-large</b></div>
+    <div><span class="label">Models<sup class="fn"><a href="#fn-models" id="fnref-models">1</a></sup></span><b>gpt-4o-mini, deepseek-v4-pro, grok-4.3, kimi-k2.5, glm-4.6, llama-4-maverick</b></div>
     <div><span class="label">Agents per run</span><b>8</b></div>
     <div><span class="label">Rounds per run</span><b>10</b></div>
     <div><span class="label">Topologies</span><b>star, complete, chain</b></div>
@@ -409,7 +410,7 @@ footer{padding-block:36px 64px;font-family:var(--sans);font-size:13.5px;color:va
     <figcaption><b>Figure 4.</b> Real runs from <code>queue_out/e3l_*</code>. The line shows how many agents were infected so far. The marks show the round in which each detector tripped. "Round" is called "tick" in the code.</figcaption>
   </figure>
   <div class="prose" style="margin-top:44px">
-    <h3>Who infected whom</h3>
+    <h3>The transmission tree: who infected whom</h3>
     <p style="margin-top:10px">Figure 4 shows messages moving, but not which message caused each infection. Figure 5 shows that. Each row is an agent and each column is a round. A thick line goes from the parent message that the code picked to the infected copy. Thin lines go from every other infected message that the agent received in the previous round. When several thin lines meet at one copy, several agents sent the note to that agent, and the logs cannot show which message caused the copy.</p>
   </div>
   <figure>
@@ -479,7 +480,7 @@ footer{padding-block:36px 64px;font-family:var(--sans);font-size:13.5px;color:va
 <section id="outcomes">
   <div class="prose">
     <div class="kicker">Q2 · Evasion by rewording</div>
-    <h2>Asked to reword the note, agents copied it exactly or dropped it</h2>
+    <h2>Asked to reword the note, the smallest model copied it exactly or dropped it</h2>
     <p>The <code>full</code> version tells each agent to restate the note in its own words. If agents did this, the copies would drift a little at a time, and an exact-text detector would lose them. That is not what happened. We counted how much of the core each infected <code>full</code> copy kept, across all vigilance levels:</p>
   </div>
   <figure>
@@ -775,6 +776,20 @@ function drawLineage(){
     const b=el('text',{x:x(i),y:B+16,'text-anchor':'middle'},g);b.textContent=lab});
   const xl=el('text',{x:(L+Rr)/2,y:B+36,'text-anchor':'middle'},g);xl.textContent='infected messages received in the previous round';
   const yl=el('text',{x:12,y:(Tp+B)/2,'text-anchor':'middle',transform:'rotate(-90 12 '+((Tp+B)/2)+')'},g);yl.textContent='copied the note';
+})();
+
+
+/* ---------- hover definitions for the payload-variant names ---------- */
+(function(){
+  const DEF={
+    exact:'exact: the payload tells each agent to copy the note word for word. The original, unmodified replicator.',
+    wrapper:'wrapper: the payload tells each agent to keep the core sentence word for word but reword the prefix and suffix around it.',
+    full:'full: the payload tells each agent to restate the whole note in its own words. The strongest attempt at evasion.'
+  };
+  document.querySelectorAll('code').forEach(el=>{
+    const k=el.textContent.trim();
+    if(DEF[k] && !el.closest('a') && !el.title){ el.title=DEF[k]; el.classList.add('vterm'); }
+  });
 })();
 
 /* ---------- figure 4 ---------- */
