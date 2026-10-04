@@ -46,6 +46,7 @@ def make_client(cfg):
         max_tokens=cfg.llm.max_tokens,
         price_in=cfg.price_in,
         price_out=cfg.price_out,
+        reasoning=OmegaConf.to_container(cfg.reasoning) if cfg.get("reasoning") is not None else None,
     )
     client.preflight()
     return client
@@ -200,8 +201,8 @@ def e1(cfg):
         for top, cs in curves.items():
             if cs:
                 m = pd.DataFrame(cs).mean(axis=0)
-                plt.plot(range(len(m)), m.values / L.n, marker="o", label=top)
-        plt.xlabel("tick")
+                plt.plot(range(1, len(m) + 1), m.values / L.n, marker="o", label=top)
+        plt.xlabel("round")
         plt.ylabel("fraction infected")
         plt.title("LLM agents (%s, vigilance %d)" % (cfg.model, L.vigilance))
         plt.legend()
@@ -448,10 +449,10 @@ def e7(cfg):
             for mc, ls in [(lo, "-"), (hi, "--")]:
                 g = df[(df.topology == top) & (df.det == d) & (df.mu_core == mc) & (df.attack_rate >= 0.4)]
                 if len(g):
-                    ax[0][i].plot(range(ticks), [(g.t_detect <= t).mean() for t in range(ticks)], color=col, linestyle=ls, label="%s mu_core=%.1f" % (d, mc))
+                    ax[0][i].plot(range(1, ticks + 1), [(g.t_detect <= t).mean() for t in range(ticks)], color=col, linestyle=ls, label="%s mu_core=%.1f" % (d, mc))
         ax[0][i].set_title(top)
-        ax[0][i].set_xlabel("tick")
-    ax[0][0].set_ylabel("fraction of outbreaks detected by tick")
+        ax[0][i].set_xlabel("round")
+    ax[0][0].set_ylabel("fraction of outbreaks detected by round")
     ax[0][0].legend(fontsize=7)
     plt.tight_layout()
     plt.savefig("e7_ttd.png", dpi=130)

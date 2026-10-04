@@ -295,8 +295,9 @@ class BudgetExceeded(Exception):
 
 
 class OpenRouterClient:
-    def __init__(self, model, budget_usd, cache_dir, base_url="https://openrouter.ai/api/v1", temperature=0.8, max_tokens=300, timeout=90.0, price_in=0.15, price_out=0.6):
+    def __init__(self, model, budget_usd, cache_dir, base_url="https://openrouter.ai/api/v1", temperature=0.8, max_tokens=300, timeout=90.0, price_in=0.15, price_out=0.6, reasoning=None):
         self.model = model
+        self.reasoning = reasoning
         self.budget = budget_usd
         self.base_url = base_url.rstrip("/")
         self.temperature = temperature
@@ -326,7 +327,10 @@ class OpenRouterClient:
         self.chat([{"role": "user", "content": "Reply with the single word ok."}], seed=0)
 
     def _key(self, messages, seed):
-        blob = json.dumps([self.model, messages, self.temperature, self.max_tokens, seed], sort_keys=True)
+        parts = [self.model, messages, self.temperature, self.max_tokens, seed]
+        if self.reasoning is not None:
+            parts.append(self.reasoning)
+        blob = json.dumps(parts, sort_keys=True)
         return hashlib.sha256(blob.encode()).hexdigest()
 
     def chat(self, messages, seed=0):
@@ -337,6 +341,8 @@ class OpenRouterClient:
             if self.spent >= self.budget:
                 raise BudgetExceeded("spent %.2f of %.2f USD" % (self.spent, self.budget))
         body = {"model": self.model, "messages": messages, "temperature": self.temperature, "max_tokens": self.max_tokens, "seed": seed, "usage": {"include": True}}
+        if self.reasoning is not None:
+            body["reasoning"] = self.reasoning
         headers = {"Authorization": "Bearer " + self.key, "Content-Type": "application/json"}
         last = None
         for attempt in range(6):

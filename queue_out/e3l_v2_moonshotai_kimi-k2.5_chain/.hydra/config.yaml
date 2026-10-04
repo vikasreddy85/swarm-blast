@@ -1,0 +1,108 @@
+experiment: e3l
+model: moonshotai/kimi-k2.5
+budget_usd: 180
+stub: false
+stub_p_copy: 0.5
+base_url: https://openrouter.ai/api/v1
+price_in: 0.15
+price_out: 0.6
+reasoning:
+  enabled: false
+cache_dir: ${hydra:runtime.cwd}/cache
+sim:
+  'n': 12
+  ticks: 30
+  beta: 0.35
+  gamma: 0.15
+  sharpness: 3.0
+  boiler_p: 0.3
+  quote_p: 0.2
+sweep:
+  topologies:
+  - star
+  - complete
+  - chain
+  mu_core:
+  - 0.0
+  - 0.1
+  - 0.2
+  - 0.4
+  - 0.6
+  mu_wrap:
+  - 0.0
+  - 0.9
+  seeds: 5
+  neg: 10
+  e4_mu_core:
+  - 0.0
+  - 0.05
+  - 0.1
+  - 0.2
+  e4_mu_wrap: 0.3
+  e6_topology: complete
+  e6_fragments:
+  - 1
+  - 2
+  - 4
+  - 8
+  e6_k:
+  - 3
+  - 4
+  - 6
+llm:
+  topologies:
+  - chain
+  'n': 8
+  ticks: 10
+  memory_turns: 1
+  seeds: 5
+  neg: 16
+  ref_runs: 4
+  seed_mode: force
+  temperature: 0.8
+  max_tokens: 300
+  workers: 8
+  dms_samples: 20
+  dms_spans:
+  - 3
+  - 6
+  - 12
+  dms_singles: false
+  vigilance: 2
+  infect_threshold: 0.8
+adapt:
+  variants:
+  - exact
+  - wrapper
+  - full
+  seeds: 8
+  threshold: 0.35
+ttd:
+  topologies:
+  - star
+  - complete
+  - chain
+  mu_core:
+  - 0.0
+  - 0.2
+  - 0.4
+  mu_wrap: 0.9
+  seeds: 10
+  neg: 20
+  alpha: 0.0
+  persist: 2
+hgt:
+  topologies:
+  - star
+  - complete
+  - chain
+  recomb:
+  - 0.0
+  - 0.3
+  - 0.6
+  - 1.0
+  mu_core: 0.08
+  mu_wrap: 0.15
+  seeds: 20
+  max_taxa: 60
+  n_perm: 199

@@ -1,0 +1,8 @@
+- experiment=e3l
+- model=x-ai/grok-4.3
+- llm.vigilance=0
+- budget_usd=180
+- llm.neg=16
+- llm.ref_runs=4
+- llm.topologies=[chain]
+- reasoning={enabled:false}

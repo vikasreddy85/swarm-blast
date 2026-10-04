@@ -15,6 +15,7 @@
 #   SKIP="e0 e4"          experiments to leave out
 #   PRICE_IN / PRICE_OUT  fallback USD per million tokens if you switch to a model with very different pricing
 #   OUT=queue_out         output root
+#   HYDRA_EXTRA="reasoning={enabled:false}"   extra Hydra overrides passed to every LLM job (space separated)
 set -u
 cd "$(dirname "$0")"
 
@@ -80,6 +81,7 @@ else
   EXTRA=()
   [ -n "${PRICE_IN:-}" ]  && EXTRA+=("price_in=$PRICE_IN")
   [ -n "${PRICE_OUT:-}" ] && EXTRA+=("price_out=$PRICE_OUT")
+  [ -n "${HYDRA_EXTRA:-}" ] && EXTRA+=($HYDRA_EXTRA)
   # most important first, so a budget stop costs the least: e3l (adaptive adversary + time to detect + horizontal transfer on logs), then e5, then e1
   for exp in e3l e5 e1; do
     for m in $MODELS; do

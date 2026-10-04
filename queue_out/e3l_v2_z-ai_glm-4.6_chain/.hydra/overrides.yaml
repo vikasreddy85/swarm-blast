@@ -1,0 +1,8 @@
+- experiment=e3l
+- model=z-ai/glm-4.6
+- llm.vigilance=2
+- budget_usd=180
+- llm.neg=16
+- llm.ref_runs=4
+- llm.topologies=[chain]
+- reasoning={enabled:false}

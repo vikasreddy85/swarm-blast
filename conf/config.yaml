@@ -10,6 +10,7 @@ stub_p_copy: 0.5
 base_url: https://openrouter.ai/api/v1
 price_in: 0.15
 price_out: 0.6
+reasoning: null           # OpenRouter reasoning setting, e.g. {enabled: false} or {effort: low}; null sends nothing
 cache_dir: ${hydra:runtime.cwd}/cache
 
 sim:

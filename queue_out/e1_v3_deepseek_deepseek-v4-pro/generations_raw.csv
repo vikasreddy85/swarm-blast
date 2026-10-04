@@ -1,0 +1,16 @@
+topology,seed,gen,prefix,suffix,core
+star,0,0,True,True,1.0
+star,1,0,True,True,1.0
+star,2,0,True,True,1.0
+star,3,0,True,True,1.0
+star,4,0,True,True,1.0
+complete,0,0,True,True,1.0
+complete,1,0,True,True,1.0
+complete,2,0,True,True,1.0
+complete,3,0,True,True,1.0
+complete,4,0,True,True,1.0
+chain,0,0,True,True,1.0
+chain,1,0,True,True,1.0
+chain,2,0,True,True,1.0
+chain,3,0,True,True,1.0
+chain,4,0,True,True,1.0

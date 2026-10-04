@@ -1,0 +1,8 @@
+- experiment=e3l
+- model=meta-llama/llama-4-maverick
+- llm.vigilance=1
+- budget_usd=180
+- llm.neg=16
+- llm.ref_runs=4
+- llm.topologies=[star]
+- reasoning={enabled:false}

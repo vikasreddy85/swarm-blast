@@ -1,0 +1,7 @@
+- experiment=e1
+- model=deepseek/deepseek-v4-pro
+- llm.vigilance=2
+- budget_usd=180
+- llm.neg=16
+- llm.ref_runs=4
+- reasoning={enabled:false}
