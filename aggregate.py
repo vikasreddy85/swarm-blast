@@ -42,7 +42,7 @@ if len(ad):
         for variant, col in zip(["exact", "wrapper", "full"], ["C0", "C1", "C3"]):
             g = ad[ad.variant == variant]
             a.scatter(g.attack_rate, g["auc_" + det], color=col, alpha=0.7, label=variant)
-        a.set_title({"lex": "lexical", "sem": "semantic", "beh": "behavioral"}[det])
+        a.set_title({"lex": "lexical", "sem": "similarity", "beh": "behavioral"}[det])
         a.set_xlabel("attack rate (replication)")
         a.set_ylim(0, 1.05)
     ax[0].set_ylabel("detector AUC")

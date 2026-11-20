@@ -636,7 +636,7 @@ def lexical_score(messages, ref, k=4, min_topics=3, min_senders=3, sig_threshold
     return best, sig
 
 
-def semantic_score(messages, ref, tau=0.7, bg_max=0.005):
+def similarity_score(messages, ref, tau=0.7, bg_max=0.005):
     units = [(s, m["topic"], m["sender"]) for m in messages for s in sentences(m["text"])]
     if len(units) < 2:
         return 0.0
@@ -670,7 +670,7 @@ def behavioral_score(messages, ref, kb=8, window=2):
 
 def score_all(messages, ref, k=4):
     lex, sig = lexical_score(messages, ref, k=k)
-    return dict(lex=lex, sem=semantic_score(messages, ref), beh=behavioral_score(messages, ref), sig=sig)
+    return dict(lex=lex, sem=similarity_score(messages, ref), beh=behavioral_score(messages, ref), sig=sig)
 
 
 def lineage_accuracy(messages, sig, k=4):
@@ -706,7 +706,7 @@ def score_one(det, messages, ref, k=4):
     if det == "lex":
         return lexical_score(messages, ref, k=k)[0]
     if det == "sem":
-        return semantic_score(messages, ref)
+        return similarity_score(messages, ref)
     return behavioral_score(messages, ref)
 
 
